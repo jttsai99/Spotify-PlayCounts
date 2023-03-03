@@ -76,7 +76,6 @@ def search_artist(token, artist_name):
         print("No artist with this name on Spotify")
         return None
 
-
 ## Request singles and albums by artist_id limited to 50 results each request
 def get_singles_albums_by_artist_limit_50(token, artist_id,offset):
     '''Search "album" and "singles" given artist_id limit 50 per request at a time
@@ -113,8 +112,17 @@ def get_all_singles_albums_by_artist(token, artist_id):
     dataframe = pd.DataFrame(data, columns = ["album_group","name","id","release_date","total_tracks",'uri'])
     #drop duplicates
     dataframe = dataframe.drop_duplicates(subset=['name'], keep='first')
+    #reset index
     dataframe = dataframe.reset_index(drop=True)
+    #rename some columns for clariication
+    rename_ls = {"name": "album_name", "id": "album_id", "release_date": "album_release_date" ,"uri": "album_uri"}
+    dataframe = dataframe.rename(columns= rename_ls)
+
+    #add artist_id to be able to tie it back to artist in relational query SQL
+    id = np.full(shape = len(dataframe),fill_value = artist_id)
+    dataframe['artist_id'] = id
     return dataframe
+
 
 ## Request a single popularity score by album_id
 def get_album_single_popularity_by_id(token, single_album_id):
@@ -135,7 +143,7 @@ def get_all_pop_for_album_single(token,albums_singles_df):
     # get the number of rows in the dataframe
     n = len(albums_singles_df.index)
     #create a list of id
-    id_list = albums_singles_df['id']
+    id_list = albums_singles_df['album_id']
     #create an array of the same size as id to get the popularity score
     pop_score_list = np.empty(n)
 
@@ -180,6 +188,10 @@ def get_all_tracks_for_one_album(token, single_album_id):
     #extract only relevant fields
     dataframe = pd.DataFrame(data, columns = ["name","id",'uri', "track_number"])
     dataframe = dataframe.reset_index(drop=True)
+
+    #rename some columns for clariication
+    rename_ls = {"name": "track_name", "id": "track_id","uri": "track_uri"}
+    dataframe = dataframe.rename(columns= rename_ls)
     
     #include album id for easier identification later on
     album_id = np.full(shape = len(dataframe),fill_value = single_album_id)
@@ -192,7 +204,7 @@ def get_all_tracks_from_albums(token, albums_singles_df):
         return dataframe of all tracks '''
     # Create empty dataframe to concatenate
     all_tracks = pd.DataFrame()
-    album_ids = albums_singles_df['id']
+    album_ids = albums_singles_df['album_id']
     #loop through each album_id to get all the tracks within
     for i in album_ids:
         #the searched dataframe of one album
@@ -220,7 +232,7 @@ def get_pop_for_all_tracks(token,all_tracks_df):
     # get the number of rows in the dataframe
     n = len(all_tracks_df.index)
     #create a list of id
-    id_list = all_tracks_df['id']
+    id_list = all_tracks_df['track_id']
     #create an array of the same size as id to get the popularity score
     pop_score_list = np.empty(n)
 
