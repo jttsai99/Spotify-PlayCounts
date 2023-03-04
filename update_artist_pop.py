@@ -2,6 +2,7 @@ import sqlite3
 import pandas as pd
 from func_doc_api import *
 import numpy as np
+from tqdm import tqdm
 
 # RUN THIS EVERYDAY AFTER 12PM for updated values
 
@@ -17,7 +18,7 @@ def update_artist_today():
     # list to combine all json object(dict)
     object_lists = []
 
-    for artist in track_artist_list:
+    for artist in tqdm(track_artist_list):
         object_lists.append(search_artist(token, artist))
 
     #convert it to dataframe

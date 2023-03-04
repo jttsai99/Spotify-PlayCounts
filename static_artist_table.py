@@ -2,6 +2,7 @@ import sqlite3
 import pandas as pd
 from func_doc_api import *
 import numpy as np
+from tqdm import tqdm
 
 ## Create the initial dataframe with 12 artists
 track_artist_list = np.array(["Ariana Grande", "Avicii", "BTS", "Coldplay", "Drake", "ILLENIUM", "JMIN", "Joji",
@@ -14,7 +15,7 @@ token = get_token(CLIENT_ID,CLIENT_SECRET)
 # list to combine all json object(dict)
 object_lists = []
 
-for artist in track_artist_list:
+for artist in tqdm(track_artist_list):
     object_lists.append(search_artist(token, artist))
 
 #convert it to dataframe

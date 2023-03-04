@@ -2,6 +2,7 @@ import sqlite3
 import pandas as pd
 from func_doc_api import *
 import numpy as np
+from tqdm import tqdm
 
 # Get client id and secret to create a token
 CLIENT_ID, CLIENT_SECRET= configure()
@@ -15,12 +16,10 @@ artist_ids = artist_identifier['artist_id']
 
 # dataframe to concatinate each result to
 data = pd.DataFrame()
-for art_id in artist_ids:
+for art_id in tqdm(artist_ids):
     temp = get_all_singles_albums_by_artist(token,art_id)
     data = pd.concat([data,temp], axis = 0)
 data = data.reset_index(drop=True)
-
-
 
 #define connection and cursor
 ##connects to Spotify.db or create if not exist
