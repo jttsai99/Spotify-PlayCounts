@@ -1,4 +1,4 @@
-from doc_api import *
+from func_doc_api import *
 
 CLIENT_ID, CLIENT_SECRET= configure()
 token = get_token(CLIENT_ID,CLIENT_SECRET)
@@ -12,3 +12,6 @@ all_artist_albums = get_all_singles_albums_by_artist(token, artist_id)
 
 # #get all tracks and put into dataframe 
 all_tracks_df = get_all_tracks_from_albums(token, all_artist_albums)
+
+print(all_artist_albums)
+print(all_tracks_df)

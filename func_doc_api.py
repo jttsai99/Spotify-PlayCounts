@@ -241,3 +241,11 @@ def get_pop_for_all_tracks(token,all_tracks_df):
     
     all_tracks_df['track_popularity'] = pop_score_list
     return all_tracks_df
+
+
+
+## Get album_id from tracks dataframe or album dataframe
+def get_album_id(albums_singles_df):
+    '''Gets the array of album_ids from a dataframe'''
+    album_ids = albums_singles_df['album_id'].unique()
+    return album_ids
