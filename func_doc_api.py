@@ -249,3 +249,57 @@ def get_album_id(albums_singles_df):
     '''Gets the array of album_ids from a dataframe'''
     album_ids = albums_singles_df['album_id'].unique()
     return album_ids
+
+
+#####################
+## better album popularity search function
+def get_pop_by_album_limit_20(token, subset_20_ids):
+    '''Read in an array of up to 20 IDs and get the album_ids and popularity score back as two arrays'''
+    url = "https://api.spotify.com/v1/albums"
+
+    #comma separated string to use in api
+    album_ids = ','.join(subset_20_ids)
+
+    headers = get_auth_header(token)
+    querystring = {
+                "ids": album_ids
+                }
+
+    result = requests.request("GET",url, headers= headers, params=querystring)
+    
+    json_result = result.json()
+    #get the albums object 
+    albums = json_result['albums']
+
+    album_pop_score = np.arange(len(albums))
+    for i in range(len(albums)):
+        album_pop_score[i] = albums[i]['popularity']
+        
+        
+
+    return subset_20_ids,album_pop_score
+
+## better track popularity search function
+def get_pop_by_tracks_limit_50(token, subset_50_ids):
+    '''Read in an array of up to 50 IDs and get the track_ids and popularity score back as two arrays'''
+    url = "https://api.spotify.com/v1/tracks"
+
+    #comma separated string to use in api
+    track_ids = ','.join(subset_50_ids)
+
+    headers = get_auth_header(token)
+    querystring = {
+                "ids": track_ids
+                }
+
+    result = requests.request("GET",url, headers= headers, params=querystring)
+    
+    json_result = result.json()
+    #get the albums object 
+    tracks = json_result['tracks']
+
+    track_pop_score = np.arange(len(tracks))
+    for i in range(len(tracks)):
+        track_pop_score[i] = tracks[i]['popularity']
+
+    return subset_50_ids,track_pop_score

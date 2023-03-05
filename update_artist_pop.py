@@ -6,10 +6,11 @@ from tqdm import tqdm
 
 # RUN THIS EVERYDAY AFTER 12PM for updated values
 
+#read in the csv with all artist_id
+artist_info = pd.read_csv("/Users/jaspertsai/Documents/GitHub/Spotify-PlayCounts/data/artists.csv")
+## get all artist_id
+artist_names = artist_info['artist_name']
 
-## Create the dataframe with 12 artists
-track_artist_list = np.array(["Ariana Grande", "Avicii", "BTS", "Coldplay", "Drake", "ILLENIUM", "JMIN", "Joji",
-                              "Martin Garrix",  "Mike Williams", "NIKI" ,"Taylor Swift"], dtype = object)
 def update_artist_today():
     # Get client id and secret to create a token
     CLIENT_ID, CLIENT_SECRET= configure()
@@ -18,7 +19,7 @@ def update_artist_today():
     # list to combine all json object(dict)
     object_lists = []
 
-    for artist in tqdm(track_artist_list):
+    for artist in tqdm(artist_names):
         object_lists.append(search_artist(token, artist))
 
     #convert it to dataframe

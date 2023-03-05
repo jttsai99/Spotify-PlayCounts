@@ -6,9 +6,9 @@ from tqdm import tqdm
 
 # RUN THIS EVERYDAY AFTER 12PM for updated values
 
-#read in the csv with all artist_id
+#read in the csv with all album_id
 album_info = pd.read_csv("/Users/jaspertsai/Documents/GitHub/Spotify-PlayCounts/data/albums.csv")
-## get all artist_id
+## get all album_id
 album_ids = album_info['album_id']
 
 def update_album_today():
@@ -16,14 +16,26 @@ def update_album_today():
     CLIENT_ID, CLIENT_SECRET= configure()
     token = get_token(CLIENT_ID,CLIENT_SECRET)
 
-    #keep track of the popularity score
-    pop_score_lists = []
+    # index by 20 to use the more efficient search function 
+    album_by_20_ind = np.arange(0,len(album_ids),20)
+    album_by_20_ind = np.concatenate((album_by_20_ind, [len(album_ids)]))
+    
+    #keep track of the album_ids and popularity score
+    album_ids_ls = []
+    album_pop_ls = []
 
-    for id in tqdm(album_ids):
-            pop_score_lists.append(get_album_single_popularity_by_id(token, id))
+    #Loop through 20 album each time then loop through last
+    for i in tqdm( range(len(album_by_20_ind)-1) ):
+        lower = album_by_20_ind[i]
+        upper = album_by_20_ind[i+1]
+        #subset to allow function to search 20 albums at once
+        subset_id = album_ids[lower:upper]
+        temp_id,temp_pop = get_pop_by_album_limit_20(token,subset_id)
+        #adds onto the list instead of append which adds list within list
+        album_ids_ls.extend(temp_id)
+        album_pop_ls.extend(temp_pop)
 
-    data = pd.DataFrame({'album_id':album_ids, 'album_popularity':pop_score_lists})
-
+    data = pd.DataFrame({'album_id':album_ids_ls, 'album_popularity':album_pop_ls})
     data['date_tracked'] = pd.Timestamp.today().strftime('%Y-%m-%d')
 
 
