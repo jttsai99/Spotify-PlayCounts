@@ -3,6 +3,7 @@ import pandas as pd
 from func_doc_api import *
 import numpy as np
 from tqdm import tqdm
+import time
 
 # Get client id and secret to create a token
 CLIENT_ID, CLIENT_SECRET= configure()
@@ -22,6 +23,7 @@ data = pd.DataFrame()
 for alb_id in tqdm(album_ids):
     temp = get_all_tracks_for_one_album(token,alb_id)
     data = pd.concat([data,temp], axis = 0)
+    time.sleep(0.05)
 data = data.reset_index(drop=True)
 
 

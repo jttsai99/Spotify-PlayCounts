@@ -3,6 +3,7 @@ import pandas as pd
 from func_doc_api import *
 import numpy as np
 from tqdm import tqdm
+import time
 
 # RUN THIS EVERYDAY AFTER 12PM for updated values
 
@@ -25,7 +26,7 @@ def update_track_today():
     track_pop_ls = []
 
     #Loop through 50 track each time then loop through last
-    for i in tqdm( range(len(track_by_50_ind)-1) ):
+    for i in tqdm( range(len(track_by_50_ind)-1), desc='Updating track popularity info'):
         lower = track_by_50_ind[i]
         upper = track_by_50_ind[i+1]
         #subset to allow function to search 50 tracks at once
@@ -34,6 +35,7 @@ def update_track_today():
         #adds onto the list instead of append which adds list within list
         track_ids_ls.extend(temp_id)
         track_pop_ls.extend(temp_pop)
+        time.sleep(0.1)
 
     data = pd.DataFrame({'track_id':track_ids_ls, 'track_popularity':track_pop_ls})
     data['date_tracked'] = pd.Timestamp.today().strftime('%Y-%m-%d')
@@ -64,4 +66,4 @@ def update_track_today():
     print("successfully updated track popularity table")
 
     
-update_track_today()
+#update_track_today()

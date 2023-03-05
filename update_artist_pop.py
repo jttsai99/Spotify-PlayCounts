@@ -19,7 +19,7 @@ def update_artist_today():
     # list to combine all json object(dict)
     object_lists = []
 
-    for artist in tqdm(artist_names):
+    for artist in tqdm(artist_names, desc='Updating artist popularity info'):
         object_lists.append(search_artist(token, artist))
 
     #convert it to dataframe
@@ -56,4 +56,4 @@ def update_artist_today():
     connection.close()
     print("successfully updated artist popularity table")
 
-update_artist_today()
+#update_artist_today()

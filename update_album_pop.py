@@ -3,6 +3,7 @@ import pandas as pd
 from func_doc_api import *
 import numpy as np
 from tqdm import tqdm
+import time
 
 # RUN THIS EVERYDAY AFTER 12PM for updated values
 
@@ -25,7 +26,7 @@ def update_album_today():
     album_pop_ls = []
 
     #Loop through 20 album each time then loop through last
-    for i in tqdm( range(len(album_by_20_ind)-1) ):
+    for i in tqdm( range(len(album_by_20_ind)-1), desc='Updating album popularity info'):
         lower = album_by_20_ind[i]
         upper = album_by_20_ind[i+1]
         #subset to allow function to search 20 albums at once
@@ -34,6 +35,7 @@ def update_album_today():
         #adds onto the list instead of append which adds list within list
         album_ids_ls.extend(temp_id)
         album_pop_ls.extend(temp_pop)
+        time.sleep(0.1)
 
     data = pd.DataFrame({'album_id':album_ids_ls, 'album_popularity':album_pop_ls})
     data['date_tracked'] = pd.Timestamp.today().strftime('%Y-%m-%d')
@@ -64,4 +66,4 @@ def update_album_today():
     print("successfully updated album popularity table")
 
 
-update_album_today()
+#update_album_today()
