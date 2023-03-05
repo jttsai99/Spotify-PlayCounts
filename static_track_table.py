@@ -23,7 +23,7 @@ data = pd.DataFrame()
 for alb_id in tqdm(album_ids):
     temp = get_all_tracks_for_one_album(token,alb_id)
     data = pd.concat([data,temp], axis = 0)
-    time.sleep(0.05)
+    time.sleep(0.1)
 data = data.reset_index(drop=True)
 
 
