@@ -40,7 +40,8 @@ with st.spinner('Generating plot...'):
     df4['album_track_name'] = df4['album_name'] + ': ' + df4['track_name']
     albumtrack_names = df4['album_track_name'].unique()
 
-
+    #get all artist popularity and follower
+    df5 = SQL_get_all_art_pop()
 
 
 
@@ -49,7 +50,7 @@ with st.spinner('Generating plot...'):
     fig = plot_artist(df)
 
     #Sidebar start
-    st.sidebar.header("Control the plots")
+    st.sidebar.header("Control the plots in Individual Artist Info")
     # Second plot
     st.sidebar.subheader("Latest Albums or Singles")
     # Generate the artist popularity plot
@@ -91,6 +92,13 @@ with st.spinner('Generating plot...'):
     'Select the Track from Albums you are interested in', options= albumtrack_names)
     fig4 = plot_track_album(df4,album_track_selected)
 
+    # Sixth plot (in tab 2)
+    fig5 = plot_all_artist_pop(df5)
+
+    # 7~9th plot (in tab 2)
+    fig6 = plot_all_artist_hist(df5,1)
+    fig7 = plot_all_artist_hist(df5,2)
+    fig8 = plot_all_artist_hist(df5,3)
 
     tab1, tab2 = st.tabs(
         ["Individual Artist Info", "All Artist Comparison" ])
@@ -113,8 +121,17 @@ with tab1:
         track_album_plot2 = st.plotly_chart(fig4, theme=None, use_container_width=True)
 
 with tab2:
-    pass
-
+    if theme == False:
+    #use 
+        all_artist_pop1 = st.plotly_chart(fig5, theme="streamlit", use_container_width=True)
+        all_artist_hist1_1 = st.plotly_chart(fig6, theme="streamlit", use_container_width=True)
+        all_artist_hist1_2 = st.plotly_chart(fig7, theme="streamlit", use_container_width=True)
+        all_artist_hist1_3 = st.plotly_chart(fig8, theme="streamlit", use_container_width=True)
+    else:
+        all_artist_pop2 = st.plotly_chart(fig5, theme=None, use_container_width=True)
+        all_artist_hist2_1 = st.plotly_chart(fig6, theme=None, use_container_width=True)
+        all_artist_hist2_2 = st.plotly_chart(fig7, theme=None, use_container_width=True)
+        all_artist_hist2_3 = st.plotly_chart(fig8, theme=None, use_container_width=True)
 # Remove the spinner once the plot is displayed
 st.spinner(False)
 

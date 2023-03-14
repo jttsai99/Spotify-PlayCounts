@@ -54,63 +54,13 @@ def SQL_get_tracks_playpop_artist(artist_name):
     ,db)
     return df
 
-def plot_track_single(df,track_name):
-    
-    #grab only the data from the track and remove duplicates
-    df = df[df['track_name'] == track_name]
-
-    #grab from track popularity datafram queried
-    dates = df['date_tracked']
-    playcount = df['track_playcount']
-    popularity = df['track_popularity']
-
-    lower_play, upper_play = plot_range_playcount_followers(playcount)
-    lower_pop, upper_pop = plot_range_popularity(popularity)
-    
-    #create the histograms
-    fig = go.Figure(
-        data=go.Bar(
-            x= dates,
-            y= playcount,
-            name="Playcount",
-            marker=dict(color="LightSkyBlue"),
-        )
-    )
-    #add the lines 
-    fig.add_trace(
-        go.Scatter(
-            x= dates,
-            y= popularity,
-            yaxis= "y2",
-            name= "Popularity",
-            marker=dict(color="purple"),
-            mode='lines+markers'
-        )
-    )
-
-    fig.update_layout(
-        title={
-            'text': f"{track_name}'s Playcount vs. Popularity",
-            'font': {'size': 24},
-            'x': 0.5,
-            'xanchor': 'center'
-        },
-        legend=dict(orientation="h"),
-        yaxis=dict(
-            title=dict(text="Playcount"),
-            range = [lower_play,upper_play], #change the range here
-            side="left",
-        ),
-        yaxis2=dict(
-            title=dict(text="Popularity Score"),
-            side="right",
-            range=[lower_pop, upper_pop], #change the range here
-            overlaying="y",
-            tickmode="auto",
-        ),
-    )
-    fig.show()
-
+def SQL_get_all_art_pop():
+    df = pd.read_sql(
+    f'''
+    SELECT * 
+    FROM Artists_Popularity
+    ''', db)
+    return df
 
 
 

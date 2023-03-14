@@ -51,7 +51,7 @@ def plot_artist(df):
             x= dates,
             y= followers,
             name="Followers",
-            marker=dict(color="pink"),
+            marker=dict(color="#8F7CE9"),
         )
     )
     #add the lines 
@@ -137,7 +137,7 @@ def plot_latest_albums_or_singles(df, album = True, number = 1):
     return(fig)
     
 def plot_album_tracks(df, album_name, pop = True):
-
+    '''plot an album/single's tracks and toggle between popularity score and playcount'''
      ## Processing data
     artist_name = df['artist_name'][1]
 
@@ -178,7 +178,7 @@ def plot_album_tracks(df, album_name, pop = True):
     return(fig)
 
 def plot_track_single(df,track_name):
-    
+    '''Plot Playcount vs. Popularity score of tracks from a single'''
     #grab only the data from the track and remove duplicates
     df = df[df['track_name'] == track_name]
     df = df.drop_duplicates(subset=['track_name','track_playcount','date_tracked'],keep = 'last')
@@ -237,7 +237,7 @@ def plot_track_single(df,track_name):
     return(fig)
 
 def plot_track_album(df,albumtrack_name):
-    
+    '''Plot Playcount vs. Popularity score of tracks from an album'''
     #grab only the data from the track and remove duplicates
     df = df[df['album_track_name'] == albumtrack_name]
 
@@ -292,6 +292,181 @@ def plot_track_album(df,albumtrack_name):
         ),
     )
     return(fig)
+
+def plot_all_artist_pop(df):
+    '''plots the popularity score of all the artist'''
+
+    fig = px.line(df, x="date_tracked", y="artist_popularity",
+             color='artist_name')
+    
+    fig.update_layout(
+        title={
+            'text':  "All Artist Popularity Score",
+            'font': {'size': 24},
+            'x': 0.5,
+            'xanchor': 'center'
+        },
+        
+    legend=dict(
+        title= "Artist", #legend title
+        font=dict(size=12)
+        ),
+        xaxis_title="Date",
+        yaxis_title="Popularity Score"
+    )
+    
+    return(fig)
+
+def plot_all_artist_hist(df, sets=1):
+    ''' plot a 2 by 2 of plot_artist() for all the artist (divided into 3 sets for better sizing)'''
+    # get the unique artist names
+    artist_names = df['artist_name'].unique()
+    #create empty list to track the bounds
+    popularity_bounds = []
+    follower_bounds = []
+    dates = df['date_tracked']
+    for artist in artist_names:
+        temp = df[df['artist_name'] == artist]
+        follower = temp['artist_followers']
+        popularity = temp['artist_popularity']
+        lower_follow, upper_follow = plot_range_playcount_followers(follower)
+        lower_pop, upper_pop = plot_range_popularity(popularity)
+
+        follower_bounds.append([lower_follow, upper_follow])
+        popularity_bounds.append([lower_pop, upper_pop])
+    
+    # set conditions grab 4 at onces
+    if sets == 1:
+        artist_names = artist_names[0:4]
+        follower_bounds = follower_bounds[0:4]
+        popularity_bounds = popularity_bounds[0:4]
+    
+    elif sets == 2:
+        artist_names = artist_names[4:8]
+        follower_bounds = follower_bounds[4:8]
+        popularity_bounds = popularity_bounds[4:8]
+    
+    else:
+        artist_names = artist_names[8:12]
+        follower_bounds = follower_bounds[8:12]
+        popularity_bounds = popularity_bounds[8:12]
+
+
+
+    specs = [[{'secondary_y': True}, {'secondary_y': True}],
+         [{'secondary_y': True}, {'secondary_y': True}]]
+    fig = make_subplots(
+    rows= 2, cols= 2,
+    subplot_titles=(artist_names), specs= specs
+    )
+
+    # artist 1 of the subgroup
+    temp = df[df['artist_name'] == artist_names[0]]
+    fig.add_trace(go.Bar(
+            x= temp.date_tracked,
+            y= temp.artist_followers,
+            name= artist_names[0],
+            legendgroup='group1'
+
+    ), row=1, col=1, secondary_y= False)
+    fig.add_trace(go.Scatter(
+            x= temp.date_tracked,
+            y= temp.artist_popularity,
+            name= artist_names[0],
+            mode='lines+markers',
+            legendgroup='group2'
+        ), row=1, col=1, secondary_y= True)
+
+    fig.update_yaxes(range = follower_bounds[0], row=1, col=1, secondary_y= False)
+    fig.update_yaxes(range = popularity_bounds[0], row=1, col=1, secondary_y= True)
+    
+    
+    # artist 2 of the subgroup
+    temp = df[df['artist_name'] == artist_names[1]]
+    fig.add_trace(go.Bar(
+            x= temp.date_tracked,
+            y= temp.artist_followers,
+            name= artist_names[1],
+            legendgroup='group1'
+
+    ), row=1, col=2, secondary_y= False)
+    fig.add_trace(go.Scatter(
+            x= temp.date_tracked,
+            y= temp.artist_popularity,
+            name= artist_names[1],
+            mode='lines+markers',
+            legendgroup='group2'
+        ), row=1, col=2, secondary_y= True)
+
+    fig.update_yaxes(range = follower_bounds[1], row=1, col=2, secondary_y= False)
+    fig.update_yaxes(range = popularity_bounds[1], row=1, col=2, secondary_y= True)
+    
+    
+   # artist 3 of the subgroup
+    temp = df[df['artist_name'] == artist_names[2]]
+    fig.add_trace(go.Bar(
+            x= temp.date_tracked,
+            y= temp.artist_followers,
+            name= artist_names[2],
+            legendgroup='group1'
+
+    ), row=2, col=1, secondary_y= False)
+    fig.add_trace(go.Scatter(
+            x= temp.date_tracked,
+            y= temp.artist_popularity,
+            name= artist_names[2],
+            mode='lines+markers',
+            legendgroup='group2'
+        ), row=2, col=1, secondary_y= True)
+
+    fig.update_yaxes(range = follower_bounds[2], row=2, col=1, secondary_y= False)
+    fig.update_yaxes(range = popularity_bounds[2], row=2, col=1, secondary_y= True)
+
+    # artist 4 of the subgroup
+    temp = df[df['artist_name'] == artist_names[3]]
+    fig.add_trace(go.Bar(
+            x= temp.date_tracked,
+            y= temp.artist_followers,
+            name= artist_names[3],
+            legendgroup='group1'
+
+    ), row=2, col=2, secondary_y= False)
+    fig.add_trace(go.Scatter(
+            x= temp.date_tracked,
+            y= temp.artist_popularity,
+            name= artist_names[3],
+            mode='lines+markers',
+            legendgroup='group2'
+        ), row=2, col=2, secondary_y= True)
+
+    fig.update_yaxes(range = follower_bounds[3], row=2, col=2, secondary_y= False)
+    fig.update_yaxes(range = popularity_bounds[3], row=2, col=2, secondary_y= True)
+
+
+
+
+    if sets == 1:
+        fig.update_layout(height=500, width=700,
+                        title_text="Artist Followers vs. Popularity")
+    else:
+        fig.update_layout(height=500, width=700)
+
+    fig.update_layout(
+    legend=dict(
+        title=dict(
+            text='Followers and Popularity',
+            font=dict(
+                size=12,
+                color='black'
+            )
+        ),
+        orientation='v'
+        )
+    )
+
+    return(fig)
+
+
 
 
 
