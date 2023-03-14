@@ -1,7 +1,9 @@
 import sqlite3 as sql
 import pandas as pd
+import os
 
-db = sql.connect("/Users/jaspertsai/Documents/GitHub/Spotify-PlayCounts/data/Spotify.db")
+#make it so that others can run the app directly
+db = sql.connect(f"{os.getcwd()}/data/Spotify.db")
 
 
 def SQL_get_artist_pop(artist_name):
