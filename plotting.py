@@ -89,6 +89,11 @@ def plot_artist(df):
             tickmode="auto",
         ),
     )
+    #fig.update_layout(xaxis = dict(type="category"))
+    fig.update_xaxes(
+    rangebreaks=[
+        dict(values=["2023-03-16"])  # hide Christmas and New Year's
+    ])
     return fig
 
 def plot_latest_albums_or_singles(df, album = True, number = 1):
@@ -234,6 +239,11 @@ def plot_track_single(df,track_name):
             tickmode="auto",
         ),
     )
+    #fig.update_layout(xaxis = dict(type="category"))
+    fig.update_xaxes(
+    rangebreaks=[
+        dict(values=["2023-03-16"])  # hide Christmas and New Year's
+    ])
     return(fig)
 
 def plot_track_album(df,albumtrack_name):
@@ -291,6 +301,11 @@ def plot_track_album(df,albumtrack_name):
             tickmode="auto",
         ),
     )
+    fig.update_xaxes(
+    rangebreaks=[
+        dict(values=["2023-03-16"])  # hide Christmas and New Year's
+    ])
+    #fig.update_layout(xaxis = dict(type="category"))
     return(fig)
 
 def plot_all_artist_pop(df):
@@ -463,6 +478,11 @@ def plot_all_artist_hist(df, sets=1):
         orientation='v'
         )
     )
+    fig.update_xaxes(
+    rangebreaks=[
+        dict(values=["2023-03-16"])  # hide Christmas and New Year's
+    ]
+)
 
     return(fig)
 
